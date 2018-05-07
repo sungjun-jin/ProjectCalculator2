@@ -13,7 +13,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     TextView preview, result;
-    Button btnPlus, btnMinus, btnMultiply, btnDivide, btnDot, btnCalc, btnCancel, btnBack;
+    Button btnPlus, btnMinus, btnMultiply, btnDivide, btnDot, btnCalc, btnCancel, btnBack; //나머지 연산자 버튼
     Button[] btn = new Button[10]; //0~9 버튼
 
 
