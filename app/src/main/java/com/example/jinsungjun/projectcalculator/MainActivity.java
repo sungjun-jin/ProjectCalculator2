@@ -1,9 +1,14 @@
 package com.example.jinsungjun.projectcalculator;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -13,12 +18,19 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     TextView preview, result;
-    Button btnPlus, btnMinus, btnMultiply, btnDivide, btnDot, btnCalc, btnCancel, btnBack; //나머지 연산자 버튼
+    Button btnPlus, btnMinus, btnMultiply, btnDivide, btnDot, btnCalc, btnCancel, btnBack,btnLeft,btnRight; //나머지 연산자 버튼
     Button[] btn = new Button[10]; //0~9 버튼
+    String bracketTemp = "";
+
+    ObjectAnimator moveX,moveY,rotation,back;
+
+    float goalX,goalY,goalWidth,goalHeight;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -51,6 +63,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(this);
 
+        btnLeft = findViewById(R.id.btnLeft);
+        btnLeft.setOnClickListener(this);
+        btnRight = findViewById(R.id.btnRight);
+        btnRight.setOnClickListener(this);
+
         //나머지 버튼 소스코드 연결, 리스너 등록
 
         for (int i = 0; i < 10; i++) {
@@ -62,7 +79,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             btn[i].setOnClickListener(this);
         }
 
+        //view 로드 체크하기
+        ViewTreeObserver vto = preview.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+
+                goalX = preview.getX();
+                goalY = preview.getY();
+                goalWidth = preview.getWidth();
+                goalHeight = preview.getHeight();
+
+
+
+
+            }
+        });
+
     }
+
+
 
     @Override
     public void onClick(View view) {
@@ -83,64 +119,164 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.btn0:
                 preview.setText(temp + "0");
+                buttonAni(btn[0]);
                 break;
             case R.id.btn1:
                 preview.setText(temp + "1");
+                buttonAni(btn[1]);
                 break;
             case R.id.btn2:
                 preview.setText(temp + "2");
+                buttonAni(btn[2]);
                 break;
             case R.id.btn3:
                 preview.setText(temp + "3");
+                buttonAni(btn[3]);
                 break;
             case R.id.btn4:
                 preview.setText(temp + "4");
+                buttonAni(btn[4]);
                 break;
             case R.id.btn5:
                 preview.setText(temp + "5");
+                buttonAni(btn[5]);
                 break;
             case R.id.btn6:
                 preview.setText(temp + "6");
+                buttonAni(btn[6]);
                 break;
             case R.id.btn7:
                 preview.setText(temp + "7");
+                buttonAni(btn[7]);
                 break;
             case R.id.btn8:
                 preview.setText(temp + "8");
+                buttonAni(btn[8]);
                 break;
             case R.id.btn9:
                 preview.setText(temp + "9");
+                buttonAni(btn[9]);
                 break;
             case R.id.btnPlus:
                 preview.setText(temp + "+");
+                buttonAni(btnPlus);
                 break;
             case R.id.btnMinus:
                 preview.setText(temp + "-");
+                buttonAni(btnMinus);
                 break;
             case R.id.btnMultiply:
                 preview.setText(temp + "*");
+                buttonAni(btnMultiply);
                 break;
             case R.id.btnDivide:
                 preview.setText(temp + "/");
+                buttonAni(btnDivide);
                 break;
             case R.id.btnCancel:
                 temp = "0";
                 preview.setText(temp);
                 break;
             case R.id.btnCalc:
+//                bracketTemp = bracket(temp);
                 temp = calc(temp);
-                result.setText(temp);
+                result.setText(temp + bracketTemp);
                 break;
             case R.id.btnBack:
                 temp = temp.substring(0, temp.length() - 1); //뒤로가기를 누르면 subString()을 통해 맨 마지막 문자를 제거한다.
                 preview.setText(temp);
                 break;
             case R.id.btnDot:
+                buttonAni(btnDot);
                 preview.setText(temp + ".");
+                break;
+            case R.id.btnLeft :
+                preview.setText(temp + "(");
+                break;
+            case R.id.btnRight :
+                preview.setText(temp + ")");
                 break;
         }
 
     } //onClick
+
+//    public String bracket(String str) {
+//
+//        String result = "";
+//
+//        int leftIndex = str.indexOf("(");
+//        int rightIndex = str.indexOf(")");
+//
+//
+//
+//        Log.d("leftindex",leftIndex+"");
+//        Log.d("rightindex",rightIndex+"");
+//
+//        //result = calc(str);
+//
+//        return result;
+//    }
+
+    public void buttonAni(final Button button) {
+
+        final float oriX,oriY;
+        oriX = button.getX();
+        oriY = button.getY();
+        button.setRotation(0);
+
+
+        moveX = ObjectAnimator.ofFloat(button,
+                "x",
+                goalX + goalWidth - 170);
+
+        moveY = ObjectAnimator.ofFloat(button,
+                "y",
+                goalY - 30);
+
+        rotation = ObjectAnimator.ofFloat(button,
+                "rotation",
+                720);
+
+        back = ObjectAnimator.ofFloat(button,
+                View.ALPHA,
+                0,1); //투명도 조정
+
+        final AnimatorSet aniSet2 = new AnimatorSet();
+
+        aniSet2.playTogether(back);
+        aniSet2.setDuration(1000);
+
+        final AnimatorSet aniSet = new AnimatorSet();
+        aniSet.playTogether(moveX,moveY,rotation);
+        aniSet.setDuration(1500);
+
+
+        aniSet.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+
+            }
+            @Override
+            public void onAnimationEnd(Animator animator) {
+
+                button.setX(oriX); //원래 버튼의 X좌표값을 넣어준다
+                button.setY(oriY); //원래 버튼의 Y좌표값을 넣어준다
+
+                aniSet2.start();
+
+            }
+            @Override
+            public void onAnimationCancel(Animator animator) {
+
+            }
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+
+            }
+        });
+
+        aniSet.start();
+    }
 
 
     public String calc(String str) {
@@ -154,7 +290,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         for (String item : spitArray) {
 
-            if (item.equals("+") || item.equals("-") || item.equals("*") || item.equals("/") || item.equals(".")) {
+            if (item.equals("+") || item.equals("-") || item.equals("*") || item.equals("/") || item.equals(".") || item.equals("(") || item.equals(")")) {
 
                 //만일 사칙연산 기호이면, 그 전까지의 숫자들을 모두 더한 값을 add해주고
                 //temp를 초기화
@@ -170,6 +306,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } //for
 
         array.add(temp); //마지막 값을 넣어준다.
+
 
         for (int j = array.size(); j > 1; j--) {
 
@@ -331,8 +468,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         array.remove(i - 1);
 
                     }
-
-
                 }
             }
         }
