@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">ProjectCalculator</string>
-    <string name="text_preview">preview</string>
+    <string name="text_preview">Preview</string>
+    <string name="text_result">Result</string>
 </resources>
