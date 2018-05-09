@@ -200,22 +200,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     } //onClick
 
-//    public String bracket(String str) {
-//
-//        String result = "";
-//
-//        int leftIndex = str.indexOf("(");
-//        int rightIndex = str.indexOf(")");
-//
-//
-//
-//        Log.d("leftindex",leftIndex+"");
-//        Log.d("rightindex",rightIndex+"");
-//
-//        //result = calc(str);
-//
-//        return result;
-//    }
+    public String bracket(String str) {
+
+
+
+        String result = "";
+
+        int leftIndex = str.indexOf("(");
+        int rightIndex = str.indexOf(")");
+
+
+
+        Log.d("leftindex",leftIndex+"");
+        Log.d("rightindex",rightIndex+"");
+
+        List<String> bracketArray = new ArrayList<>(); //계산식을 담아줄 List 선언
+
+        for(int i=leftIndex+1;i<rightIndex;i++) {
+
+            bracketArray =
+        }
+
+        //result = calc(str);
+
+        return result;
+    }
 
     public void buttonAni(final Button button) {
 
